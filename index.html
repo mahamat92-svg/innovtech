@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#1747b8"><title>INNOVTECH — Connexion</title>
+<style>
+:root{color-scheme:light;--blue:#2563eb;--ink:#17243b;--muted:#65758e;--line:#e2e9f4}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 85% 5%,#dce9ff 0,transparent 31%),#f3f6fb;color:var(--ink);font:15px system-ui,-apple-system,"Segoe UI",sans-serif}.card{width:min(510px,100%);background:#fff;border:1px solid var(--line);border-radius:23px;padding:clamp(24px,6vw,38px);box-shadow:0 24px 70px #19345e14}.brand{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:900;letter-spacing:.04em}.mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(140deg,#3d83ff,#1747b8);color:#fff;font-size:21px}.brand small{display:block;font-size:9px;color:#8090a7;letter-spacing:.14em}.kicker{margin-top:32px;color:var(--blue);font-size:10px;font-weight:850;letter-spacing:.16em}.card h1{font-size:32px;line-height:1.1;letter-spacing:-.04em;margin:9px 0 11px}.intro,.muted{color:var(--muted);line-height:1.6;font-size:13px}.btn{width:100%;display:inline-flex;justify-content:center;align-items:center;margin-top:11px;padding:13px 16px;background:var(--blue);color:#fff;border:0;border-radius:11px;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer}.btn:hover{background:#1747b8}.btn.secondary{background:white;color:var(--blue);border:1px solid #d5e1f5}.btn:disabled{opacity:.55;cursor:wait}.form{display:grid;gap:12px;margin-top:18px}.field{display:grid;gap:6px}.field label{font-size:11px;font-weight:750;color:#60718b}.field input,.field select{width:100%;padding:12px 13px;border:1px solid #dce4ef;border-radius:10px;background:#fbfcfe;color:var(--ink);font:inherit;outline:none}.field input:focus,.field select:focus{border-color:#75a3ff;box-shadow:0 0 0 3px #2563eb14}.row{display:grid;grid-template-columns:1fr 1fr;gap:11px}.switch{border:0;background:transparent;color:var(--blue);font-weight:800;cursor:pointer;padding:0}.status{margin-top:13px;padding:11px 12px;border-radius:10px;background:#eef5ff;border:1px solid #d6e5ff;color:#31527e;font-size:12px;line-height:1.55}.status.error{background:#fff3f3;border-color:#ffdada;color:#ac3038}.legal{margin-top:20px;padding-top:15px;border-top:1px solid var(--line);font-size:10px;color:#8290a7;line-height:1.55}.hidden{display:none!important}@media(max-width:480px){.row{grid-template-columns:1fr}.card h1{font-size:28px}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand"><span class="mark">✳</span><span>INNOVTECH<small>BUSINESS CLOUD</small></span></div>
+  <section id="welcome">
+    <div class="kicker">ESPACE COMMERCIAL SÉCURISÉ</div>
+    <h1>Bienvenue dans votre boutique</h1>
+    <p class="intro">Connectez-vous pour retrouver votre espace MAHAMAT, vos produits, ventes, factures et crédits enregistrés dans Supabase.</p>
+    <button class="btn" id="open-login" type="button">Accéder à la connexion</button>
+    <div class="legal">Données commerciales enregistrées dans Supabase. L'authentification utilise votre compte sécurisé.</div>
+  </section>
+  <section id="auth" class="hidden">
+    <div class="kicker" id="form-kicker">VOTRE ESPACE</div>
+    <h1 id="form-title">Connexion</h1>
+    <p class="intro" id="form-description">Saisissez votre e-mail et votre mot de passe.</p>
+    <div id="message" class="status hidden" role="status" aria-live="polite"></div>
+    <form id="login-form" class="form">
+      <div class="field"><label for="login-email">E-mail</label><input id="login-email" name="email" type="email" autocomplete="email" required placeholder="vous@exemple.com"></div>
+      <div class="field"><label for="login-password">Mot de passe</label><input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Votre mot de passe"></div>
+      <button class="btn" id="submit-login" type="submit">Se connecter</button>
+    </form>
+    <form id="signup-form" class="form hidden">
+      <div class="field"><label for="signup-name">Votre nom</label><input id="signup-name" name="full_name" autocomplete="name" required placeholder="Nom complet"></div>
+      <div class="field"><label for="signup-shop">Nom de la boutique</label><input id="signup-shop" name="shop_name" required value="MAHAMAT" placeholder="Nom de votre commerce"></div>
+      <div class="field"><label for="signup-country">Pays</label><select id="signup-country" name="country"><option>Tchad</option><option>Cameroun</option><option>Togo</option><option>Bénin</option><option>Sénégal</option><option>Niger</option><option>Mali</option><option>Gabon</option><option>Congo</option></select></div>
+      <div class="field"><label for="signup-email">E-mail</label><input id="signup-email" name="email" type="email" autocomplete="email" required placeholder="vous@exemple.com"></div>
+      <div class="field"><label for="signup-password">Mot de passe (8 caractères minimum)</label><input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password" required placeholder="Créer un mot de passe"></div>
+      <button class="btn" id="submit-signup" type="submit">Créer mon compte</button>
+    </form>
+    <p class="muted" style="margin:16px 0 0;text-align:center"><span id="switch-label">Pas encore de compte ?</span> <button id="switch-mode" class="switch" type="button">Créer un compte</button></p>
+    <button id="back-home" class="btn secondary" type="button">← Retour</button>
+    <div class="legal">Les produits, ventes et crédits sont stockés dans Supabase. Seul le jeton de session d'authentification est conservé dans la session du navigateur.</div>
+  </section>
+</main>
+<script>
+(()=>{
+  const SUPABASE_URL='https://ukharykzvrppezxjgqrj.supabase.co';
+  const SUPABASE_KEY='sb_publishable_AkHCBOsMwOAWkExu_OQtmw_N77lmmwv';
+  const projectRef='ukharykzvrppezxjgqrj';
+  const welcome=document.getElementById('welcome'),auth=document.getElementById('auth');
+  const loginForm=document.getElementById('login-form'),signupForm=document.getElementById('signup-form');
+  const message=document.getElementById('message');let mode='login';
+  function showAuth(){welcome.classList.add('hidden');auth.classList.remove('hidden');document.getElementById('login-email').focus()}
+  function showNotice(text,error=false){message.textContent=text;message.classList.remove('hidden','error');if(error)message.classList.add('error')}
+  function setMode(next){mode=next;message.classList.add('hidden');loginForm.classList.toggle('hidden',mode!=='login');signupForm.classList.toggle('hidden',mode!=='signup');document.getElementById('form-kicker').textContent=mode==='login'?'VOTRE ESPACE':'NOUVELLE BOUTIQUE';document.getElementById('form-title').textContent=mode==='login'?'Connexion':'Créer un compte';document.getElementById('form-description').textContent=mode==='login'?'Saisissez votre e-mail et votre mot de passe.':'Créez votre accès et les informations de votre boutique.';document.getElementById('switch-label').textContent=mode==='login'?'Pas encore de compte ?':'Vous avez déjà un compte ?';document.getElementById('switch-mode').textContent=mode==='login'?'Créer un compte':'Se connecter'}
+  async function request(path,payload){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try{const response=await fetch(SUPABASE_URL+path,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(payload),signal:controller.signal});const body=await response.json().catch(()=>({}));if(!response.ok)throw new Error(body.msg||body.message||body.error_description||'La demande Supabase a échoué (HTTP '+response.status+').');return body}catch(err){if(err.name==='AbortError')throw new Error('Délai dépassé : Supabase ne répond pas. Vérifiez votre connexion et l’URL du projet.');if(err?.name==='TypeError')throw new Error('Connexion à Supabase impossible depuis cet aperçu. Ouvrez l’aperçu de l’application ou vérifiez le réseau.');throw err}finally{clearTimeout(timer)}}
+  function saveSession(data){if(data?.access_token)sessionStorage.setItem('sb-'+projectRef+'-auth-token',JSON.stringify(data))}
+  function goToApp(){showNotice('Connexion réussie. Ouverture de votre espace MAHAMAT…');setTimeout(()=>{window.location.assign('/')},650)}
+  document.getElementById('open-login').addEventListener('click',showAuth);
+  document.getElementById('switch-mode').addEventListener('click',()=>setMode(mode==='login'?'signup':'login'));
+  document.getElementById('back-home').addEventListener('click',()=>{auth.classList.add('hidden');welcome.classList.remove('hidden')});
+  loginForm.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit-login');b.disabled=true;b.textContent='Connexion…';try{const fd=new FormData(loginForm);const session=await request('/auth/v1/token?grant_type=password',{email:fd.get('email'),password:fd.get('password')});saveSession(session);goToApp()}catch(err){showNotice(err.message||'Connexion impossible.',true)}finally{b.disabled=false;b.textContent='Se connecter'}});
+  signupForm.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit-signup');b.disabled=true;b.textContent='Création…';showNotice('Création du compte en cours…');try{const fd=new FormData(signupForm);const result=await request('/auth/v1/signup',{email:fd.get('email'),password:fd.get('password'),data:{full_name:fd.get('full_name'),shop_name:fd.get('shop_name'),country:fd.get('country')}});if(result.access_token){saveSession(result);goToApp()}else showNotice('Compte créé. Vérifiez votre e-mail, puis revenez vous connecter.')}catch(err){showNotice(err.message||'Inscription impossible.',true)}finally{b.disabled=false;b.textContent='Créer mon compte'}});
+})();
+</script>
+</body>
+</html>

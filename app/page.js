@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { supabase, supabaseConfigured } from '../lib/supabase';
+import { supabase, supabaseConfigured } from '../lib/supabase'; 
 
 const countries=['Tchad','Cameroun','Togo','Bénin','Sénégal','Niger','Mali','Gabon','Congo'];
 const paymentMethods=['Espèces','MTN MoMo','Orange Money','Airtel Money','Crédit'];

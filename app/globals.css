@@ -47,3 +47,23 @@
   .invoice-dialog,.invoice-overlay{position:static;display:block;overflow:visible;max-height:none;width:100%;padding:0;margin:0;background:#fff;box-shadow:none}
   .no-print{display:none!important}
 }
+
+/* Identité de facture (logo et coordonnées sauvegardés dans le profil Supabase). */
+.business-branding{position:relative}
+.business-branding summary{list-style:none}
+.business-branding summary::-webkit-details-marker{display:none}
+.business-branding-panel{position:absolute;right:0;top:43px;z-index:12;width:min(340px,90vw);padding:15px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 35px #17243b22;display:grid;gap:10px}
+.business-branding-panel form{display:grid;gap:8px}
+.business-branding-panel label{font-size:11px;font-weight:700;color:#6f7d94}
+.business-branding-panel input{width:100%;padding:9px;border:1px solid #dce4ef;border-radius:8px}
+.logo-upload{display:block;text-align:center;line-height:1.4;white-space:normal}
+.invoice-company-head{display:flex;align-items:center;gap:14px}
+.invoice-logo-image{width:70px;height:60px;object-fit:contain;border-radius:6px}
+.invoice-company-meta{display:grid;gap:4px;flex:1}
+.invoice-company-meta strong{font-size:15px;letter-spacing:0}
+.invoice-company-meta span{font-size:10px;color:#73819a;letter-spacing:0;margin:0}
+.invoice-company-date{text-align:right;white-space:nowrap;font-size:10px;color:#536581;line-height:1.5}
+.invoice-lines table{border-collapse:collapse}
+.invoice-lines th,.invoice-lines td{border:1px solid #d8e0eb}
+.invoice-total strong{font-size:23px}
+@media(max-width:600px){.business-branding-panel{right:-95px}.invoice-company-head{gap:8px}.invoice-logo-image{width:54px;height:48px}.invoice-company-meta strong{font-size:12px}.invoice-company-meta span,.invoice-company-date{font-size:9px}}

@@ -12,7 +12,7 @@
   <section id="welcome">
     <div class="kicker">ESPACE COMMERCIAL SÉCURISÉ</div>
     <h1>Bienvenue dans votre boutique</h1>
-    <p class="intro">Connectez-vous pour retrouver votre espace MAHAMAT, vos produits, ventes, factures et crédits enregistrés dans Supabase.</p>
+    <p class="intro">Connectez-vous pour retrouver l’espace de votre organisation et les données enregistrées dans Supabase.</p>
     <button class="btn" id="open-login" type="button">Accéder à la connexion</button>
     <div class="legal">Données commerciales enregistrées dans Supabase. L'authentification utilise votre compte sécurisé.</div>
   </section>
@@ -28,7 +28,8 @@
     </form>
     <form id="signup-form" class="form hidden">
       <div class="field"><label for="signup-name">Votre nom</label><input id="signup-name" name="full_name" autocomplete="name" required placeholder="Nom complet"></div>
-      <div class="field"><label for="signup-shop">Nom de la boutique</label><input id="signup-shop" name="shop_name" required value="MAHAMAT" placeholder="Nom de votre commerce"></div>
+      <div class="field"><label for="signup-shop">Nom de l’organisation / boutique</label><input id="signup-shop" name="shop_name" required placeholder="Ex. École du Centre"></div>
+      <div class="field"><label for="signup-sector">Secteur d’activité</label><select id="signup-sector" name="secteur"><option>Commerce</option><option>École</option><option>Clinique</option><option>Restaurant</option><option>Transport</option><option>Agriculture</option><option>ONG</option></select></div>
       <div class="field"><label for="signup-country">Pays</label><select id="signup-country" name="country"><option>Tchad</option><option>Cameroun</option><option>Togo</option><option>Bénin</option><option>Sénégal</option><option>Niger</option><option>Mali</option><option>Gabon</option><option>Congo</option></select></div>
       <div class="field"><label for="signup-email">E-mail</label><input id="signup-email" name="email" type="email" autocomplete="email" required placeholder="vous@exemple.com"></div>
       <div class="field"><label for="signup-password">Mot de passe (8 caractères minimum)</label><input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password" required placeholder="Créer un mot de passe"></div>
@@ -52,12 +53,12 @@
   function setMode(next){mode=next;message.classList.add('hidden');loginForm.classList.toggle('hidden',mode!=='login');signupForm.classList.toggle('hidden',mode!=='signup');document.getElementById('form-kicker').textContent=mode==='login'?'VOTRE ESPACE':'NOUVELLE BOUTIQUE';document.getElementById('form-title').textContent=mode==='login'?'Connexion':'Créer un compte';document.getElementById('form-description').textContent=mode==='login'?'Saisissez votre e-mail et votre mot de passe.':'Créez votre accès et les informations de votre boutique.';document.getElementById('switch-label').textContent=mode==='login'?'Pas encore de compte ?':'Vous avez déjà un compte ?';document.getElementById('switch-mode').textContent=mode==='login'?'Créer un compte':'Se connecter'}
   async function request(path,payload){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try{const response=await fetch(SUPABASE_URL+path,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(payload),signal:controller.signal});const body=await response.json().catch(()=>({}));if(!response.ok)throw new Error(body.msg||body.message||body.error_description||'La demande Supabase a échoué (HTTP '+response.status+').');return body}catch(err){if(err.name==='AbortError')throw new Error('Délai dépassé : Supabase ne répond pas. Vérifiez votre connexion et l’URL du projet.');if(err?.name==='TypeError')throw new Error('Connexion à Supabase impossible depuis cet aperçu. Ouvrez l’aperçu de l’application ou vérifiez le réseau.');throw err}finally{clearTimeout(timer)}}
   function saveSession(data){if(data?.access_token)sessionStorage.setItem('sb-'+projectRef+'-auth-token',JSON.stringify(data))}
-  function goToApp(){showNotice('Connexion réussie. Ouverture de votre espace MAHAMAT…');setTimeout(()=>{window.location.assign('/')},650)}
+  function goToApp(){showNotice('Connexion réussie. Ouverture de votre espace…');setTimeout(()=>{window.location.assign('/')},650)}
   document.getElementById('open-login').addEventListener('click',showAuth);
   document.getElementById('switch-mode').addEventListener('click',()=>setMode(mode==='login'?'signup':'login'));
   document.getElementById('back-home').addEventListener('click',()=>{auth.classList.add('hidden');welcome.classList.remove('hidden')});
   loginForm.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit-login');b.disabled=true;b.textContent='Connexion…';try{const fd=new FormData(loginForm);const session=await request('/auth/v1/token?grant_type=password',{email:fd.get('email'),password:fd.get('password')});saveSession(session);goToApp()}catch(err){showNotice(err.message||'Connexion impossible.',true)}finally{b.disabled=false;b.textContent='Se connecter'}});
-  signupForm.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit-signup');b.disabled=true;b.textContent='Création…';showNotice('Création du compte en cours…');try{const fd=new FormData(signupForm);const result=await request('/auth/v1/signup',{email:fd.get('email'),password:fd.get('password'),data:{full_name:fd.get('full_name'),shop_name:fd.get('shop_name'),country:fd.get('country')}});if(result.access_token){saveSession(result);goToApp()}else showNotice('Compte créé. Vérifiez votre e-mail, puis revenez vous connecter.')}catch(err){showNotice(err.message||'Inscription impossible.',true)}finally{b.disabled=false;b.textContent='Créer mon compte'}});
+  signupForm.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submit-signup');b.disabled=true;b.textContent='Création…';showNotice('Création du compte en cours…');try{const fd=new FormData(signupForm);const result=await request('/auth/v1/signup',{email:fd.get('email'),password:fd.get('password'),data:{full_name:fd.get('full_name'),shop_name:fd.get('shop_name'),country:fd.get('country'),secteur:fd.get('secteur')}});if(result.access_token){saveSession(result);goToApp()}else showNotice('Compte créé. Vérifiez votre e-mail, puis revenez vous connecter.')}catch(err){showNotice(err.message||'Inscription impossible.',true)}finally{b.disabled=false;b.textContent='Créer mon compte'}});
 })();
 </script>
 </body>

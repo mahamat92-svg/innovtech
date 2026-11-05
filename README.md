@@ -1,41 +1,41 @@
-# INNOVTECH — Next.js + Supabase
+# INNOVTECH — plateforme multi-sectorielle
 
-Application Next.js prête pour Vercel, avec authentification Supabase, profils commerçants, création de produits et ventes persistées en base, factures automatiques et interface admin protégée par rôle.
+Application Next.js + Supabase en français, avec interface bleue, valeurs en FCFA et espaces séparés pour Commerce, École, Clinique, Restaurant, Transport, Agriculture et ONG.
 
-## Démarrage local
+## Démarrage
 
 1. Node.js 20.9 ou plus récent.
-2. `npm install`
-3. Copier `.env.example` en `.env.local` (un `.env.local` local est déjà préparé avec l'URL et la clé publishable fournies).
-4. Exécuter la migration `supabase/migrations/202611040002_live_saas.sql` dans le SQL Editor de Supabase.
-5. `npm run dev` puis ouvrir `http://localhost:3000`.
+2. `npm ci`
+3. Copier `.env.example` vers `.env.local` et configurer les variables Supabase.
+4. Les migrations `0002` (commerce) et `0003` (remboursements) sont déjà appliquées sur le projet Supabase existant. **Pour activer les nouveaux secteurs, appliquer uniquement `supabase/migrations/202611040004_multi_sector.sql`** dans Supabase SQL Editor.
+5. `npm run dev`, puis ouvrir `http://localhost:3000`.
 
-## Base Supabase
+## Espaces métier
 
-Les migrations `supabase/migrations/202611040002_live_saas.sql` et `supabase/migrations/202611040003_credit_repayments.sql` créent `users`, `produits`, `clients`, `ventes`, `vente_lignes`, `factures`, `abonnements` et `remboursements_credit`, le profil d'inscription automatique, les règles RLS, la fonction atomique de vente, l'encaissement partiel de crédit et le blocage admin. La vente calcule le total côté base, contrôle le stock, met à jour le crédit et crée la facture dans une transaction.
+- **Commerce** : produits, clients, ventes/factures et suivi de crédits existants. Après une vente, « Voir la facture » ouvre l’aperçu imprimable, avec partage par e-mail (brouillon prérempli, envoi à confirmer) ou WhatsApp (texte prérempli, envoi à confirmer).
+- **Autres secteurs** : choix de secteur à l'inscription et registre persistant dans Supabase permettant de créer, suivre et supprimer des dossiers avec référence, contact, montant FCFA, statut et notes. Les libellés/modules diffèrent selon le secteur.
+- **Admin** : liste des organisations, filtre par secteur/pays/état, consultation et blocage/déblocage.
 
-Après avoir créé ton premier compte dans l'application, récupère son UUID dans **Supabase → Authentication → Users**, puis exécute une seule fois dans le SQL Editor :
+Le registre des autres secteurs est une première base multi-sectorielle, pas encore un logiciel spécialisé complet (ex. gestion détaillée des examens scolaires ou dossier médical).
+
+## Base et sécurité
+
+La migration 004 ajoute `users.secteur`, met à jour le déclencheur de profil à l'inscription, et crée `activites_sectorielles` avec RLS. Chaque organisation ne peut consulter que ses propres enregistrements. La clé publishable est utilisée côté client; aucune clé `service_role` ne doit être exposée.
+
+Pour promouvoir manuellement un propriétaire en admin après inscription, récupère son UUID dans **Supabase → Authentication → Users**, puis exécute dans SQL Editor :
 
 ```sql
 update public.users set role='admin' where id='UUID_DU_PROPRIETAIRE';
 ```
 
-N'ajoute jamais de moyen public pour promouvoir un compte en admin.
+N'ajoute jamais de promotion admin dans l'inscription publique.
 
 ## Déploiement Vercel
 
-Voir [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md) pour les étapes détaillées sans GitHub : télécharger le ZIP, décompresser, installer les dépendances et déployer avec Vercel CLI. Vercel détecte Next.js et lance `npm run build` automatiquement.
+Voir [`VERCEL_DEPLOY.md`](VERCEL_DEPLOY.md) et [`PRODUCTION_SETUP.md`](PRODUCTION_SETUP.md). La migration 004 doit être appliquée à Supabase avant d'utiliser les espaces non-commerciaux. Ne jamais inclure `.env.local` dans une archive partagée.
 
-La clé `sb_publishable` est faite pour le client. Aucune clé `service_role` n'est utilisée ou exposée. Les règles RLS sont la frontière de sécurité pour les données.
+## Limites connues
 
-## Fonctions connectées
+Les paiements réels MTN MoMo, Orange Money et Airtel Money, ainsi que le prélèvement d'abonnement, ne sont pas intégrés : les modes de paiement peuvent être enregistrés, mais aucun transfert opérateur n'est déclenché. La migration 004 n'est pas appliquée à Supabase par ce dépôt. Après application, il reste à tester les parcours avec plusieurs comptes réels et à auditer les règles RLS avant une mise en production large.
 
-- Inscription e-mail/mot de passe, profil et boutique créés automatiquement.
-- Connexion et déconnexion par Supabase Auth.
-- Ajout et lecture des produits et clients persistés.
-- Nouvelle vente persistée par RPC transactionnelle, décrément de stock et facture générée.
-- Tableau admin listant les vrais profils et abonnements; aperçu des produits/ventes/factures, blocage/déblocage via RPC.
-
-## Limites à connaître
-
-Les confirmations d'e-mail dépendent des réglages Supabase Auth. L'abonnement n'est pas encore encaissé par Mobile Money : le montant d'abonnement affiché provient des données de formule, pas d'un journal de paiement confirmé. Les paiements opérateurs, export PDF, multi-utilisateur par boutique et fonctionnement hors-ligne restent à connecter. L'application active est l'application Next.js dans `app/page.js`; `index.html` est un raccourci neutre vers cette application, sans données de démonstration.
+`app/page.js` est la route Next.js active. `index.html` est un formulaire autonome ancien de secours, non utilisé comme route par Next.js.

@@ -1,24 +1,21 @@
-# Sécurité INNOVTECH — état actuel
+# Sécurité INNOVTECH — état multi-sectoriel
 
-## Protections ajoutées dans le projet Next.js
+## Protections dans le code
 
-- Authentification e-mail/mot de passe via Supabase Auth.
-- Profil et rôle relus depuis Supabase après connexion; le rôle admin n'est pas accepté depuis le navigateur.
-- Les règles RLS du fichier `supabase/migrations/202611040002_live_saas.sql` séparent les lignes par utilisateur.
-- La création d'une vente passe par une fonction SQL transactionnelle qui recalcule le total à partir des prix en base, vérifie le stock, crée les lignes/factures et inscrit le crédit.
-- Le blocage admin est effectué par RPC avec vérification du rôle côté base.
-- `vercel.json` définit une CSP limitée au site et au projet Supabase, HSTS, `nosniff`, une politique de référent et permissions réduites.
-- La clé utilisée est la clé publishable `sb_publishable_...`. Aucune clé `service_role` n'est présente dans le client.
+- Inscription et connexion via Supabase Auth; le profil et le rôle sont relus depuis la base.
+- Les données métier ne sont pas enregistrées en localStorage. Le navigateur conserve seulement le jeton de session Supabase dans `sessionStorage`.
+- La migration `0002` protège les tables commerce et ventes par RLS; les migrations `0003` et `0004` ajoutent les remboursements et le registre sectoriel protégé par organisation.
+- Les ventes et remboursements passent par des fonctions SQL transactionnelles.
+- La clé `sb_publishable` est une clé client publique. Ne jamais exposer une clé `service_role` dans l'interface.
 
-## Activation encore requise
+## Activation de la migration multi-sectorielle
 
-Le code et la migration sont préparés, mais le schéma n'est pas appliqué au projet distant. La clé publishable permet les requêtes clientes autorisées par RLS; elle ne donne pas le privilège de créer des tables. Il faut exécuter le SQL dans Supabase **SQL Editor**, puis enregistrer `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` dans Vercel et redéployer. Avant ces étapes, Auth/signup et les opérations de base de données ne sont pas utilisables de bout en bout.
+Les migrations `0002` et `0003` existent déjà sur le projet Supabase d'INNOVTECH selon les informations reçues. Le nouveau choix de secteurs et la table `activites_sectorielles` nécessitent d'exécuter `supabase/migrations/202611040004_multi_sector.sql` dans SQL Editor. Jusqu'à cette étape, le code peut compiler mais les nouveaux profils/écrans sectoriels ne pourront pas utiliser leur colonne/table.
 
-Après création du premier compte propriétaire, promouvoir son UUID depuis le SQL Editor avec la requête du README. Tester au minimum deux comptes marchands différents et vérifier qu'ils ne voient pas les données l'un de l'autre.
+Après migration, tester les accès avec deux organisations et deux secteurs, en s'assurant qu'aucune ne peut lire les dossiers de l'autre.
 
-## Limites de sécurité/fonctionnalité
+## Limites
 
-- Les paiements réels Mobile Money et le prélèvement d'abonnement ne sont pas intégrés. L'admin affiche le statut de formule enregistré, pas des paiements encaissés.
-- Cette version n'a pas été soumise à un audit indépendant ni à des tests d'intrusion.
-- Ne jamais placer un secret fournisseur ou la clé Supabase `service_role` dans une variable `NEXT_PUBLIC_*`, dans l'interface ou dans Git.
-- L'ancien prototype statique a été supprimé. `index.html` est un raccourci sans données; l'application active est servie par `app/page.js`.
+Les espaces sectoriels actuels offrent un registre commun de dossiers, contacts, statuts et montants FCFA avec des libellés adaptés à sept secteurs. Ce n'est pas encore un logiciel spécialisé complet : par exemple, gestion des emplois du temps/examens scolaires et dossiers médicaux complets ne sont pas encore implémentés.
+
+Les transferts Mobile Money et le prélèvement d'abonnement ne sont pas intégrés. Le code n'a pas fait l'objet d'un audit indépendant ni de tests d'intrusion.

@@ -1,42 +1,41 @@
-# Installation Supabase et Vercel pour INNOVTECH
+# Installation multi-sectorielle INNOVTECH
 
-## 1. Appliquer le schéma dans Supabase
+## Migration à exécuter
 
-Le projet utilise d'abord `supabase/migrations/202611040002_live_saas.sql`, puis `supabase/migrations/202611040003_credit_repayments.sql` pour les remboursements partiels de crédits. Dans Supabase, ouvre **SQL Editor → New query**, colle et exécute chaque fichier dans cet ordre. La clé publishable ne peut pas créer les tables à distance : cette étape doit être faite depuis le tableau de bord Supabase (ou par Supabase CLI avec un accès de développement).
+Les migrations `0002` (commerce), `0003` (remboursements) sont déjà exécutées sur le projet selon la confirmation reçue. Le nouveau schéma multi-sectoriel exige **une migration supplémentaire** :
 
-Les migrations créent `users`, `produits`, `clients`, `ventes`, `vente_lignes`, `factures`, `abonnements` et `remboursements_credit`; les politiques RLS limitent les lignes des commerçants à leur propre compte. La migration crée aussi automatiquement un profil lors d'un signup, et une fonction transactionnelle de vente qui vérifie le stock, diminue les quantités et crée une facture.
+`supabase/migrations/202611040004_multi_sector.sql`
 
-## 2. Créer le propriétaire admin
+Dans Supabase, ouvre **SQL Editor → New query**, colle ce fichier et exécute-le. Elle ajoute le champ `secteur` au profil, la création de profil depuis les métadonnées Auth et la table `activites_sectorielles` avec ses politiques RLS. La clé publishable seule ne permet pas d'appliquer le SQL à distance.
 
-1. D'abord, inscris le compte propriétaire dans l'application après avoir appliqué le schéma.
-2. Ouvre **Authentication → Users**, copie l'UUID de ce compte.
-3. Dans SQL Editor, lance :
+## Secteurs inclus dans la première version
+
+- Commerce
+- École
+- Clinique
+- Restaurant
+- Transport
+- Agriculture
+- ONG / association
+
+À l'inscription, le responsable choisit le secteur. Le tableau de bord adapte les libellés et le registre permet de créer et suivre des dossiers, références, contacts, montants FCFA, statuts et notes dans Supabase. Le registre est une base opérationnelle réutilisable, pas encore un logiciel spécialisé complet pour chaque profession.
+
+## Administration
+
+Le premier compte admin doit être promu manuellement depuis SQL Editor. Après l'inscription du propriétaire, copie son UUID dans **Authentication → Users** puis lance :
 
 ```sql
 update public.users set role='admin' where id='UUID_DU_PROPRIETAIRE';
 ```
 
-Ne crée pas d'inscription admin publique. L'interface lit le rôle depuis la table `users`; les actions de blocage passent par la fonction `innovtech_admin_set_block` qui vérifie ce rôle.
+Ne jamais mettre une option publique pour créer un admin.
 
-## 3. Paramétrer Auth
+## Tests à effectuer après migration
 
-Dans Supabase **Authentication → URL Configuration**, définis l'URL de production Vercel comme Site URL, puis ajoute `http://localhost:3000/**` et tes domaines Vercel aux Redirect URLs. Si la confirmation e-mail est activée, le commerçant doit confirmer son adresse avant de se connecter.
+1. Inscrire une organisation de chaque secteur de test.
+2. Ajouter un dossier dans chaque espace et vérifier qu'il réapparaît après reconnexion.
+3. Tester avec deux organisations distinctes que les règles RLS empêchent la lecture croisée.
+4. Tester le commerce existant : produit, vente à crédit, facture et remboursement partiel.
+5. Vérifier la liste des organisations et le filtre par secteur dans l'admin.
 
-## 4. Configurer Vercel
-
-Le dépôt contient `package.json` (Next.js). Importe-le dans Vercel et ajoute ces variables dans **Settings → Environment Variables** pour Preview et Production :
-
-- `NEXT_PUBLIC_SUPABASE_URL` = l'URL du projet fournie
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` = la clé publishable `sb_publishable_...` fournie
-
-Le `.env.local` local est configuré; il est ignoré par Git. Le build Vercel est `npm run build`. Après ajout ou changement de variable, redéploie.
-
-La clé publishable est conçue pour être publique et ne contourne pas les règles RLS. **Ne mets jamais la clé `service_role` ou des secrets Mobile Money dans une variable NEXT_PUBLIC, le code client ou Git.**
-
-## 5. Vérification avant lancement
-
-Crée deux comptes commerçants séparés. Vérifie qu'ils ne peuvent pas consulter les produits, clients, ventes ou factures de l'autre compte. Vérifie aussi l'inscription, confirmation e-mail, connexion, ajout produit, vente, décrément du stock, facture et blocage admin. Les paiements Mobile Money et les encaissements d'abonnement ne sont pas intégrés dans cette livraison; ils demandent un agrégateur, des identifiants marchands et une validation webhook côté serveur.
-
-## État de cette livraison
-
-L'application Next.js est écrite pour lire/écrire les tables Supabase et utilise la clé publishable fournie dans l'environnement local. Cependant, je ne peux pas appliquer la migration au projet distant avec cette clé publique. Jusqu'à ce que le SQL soit exécuté et que les variables soient enregistrées dans Vercel, Auth et les requêtes de base ne seront pas actives. Une fois ces étapes effectuées, l'inscription, connexion, produits, ventes/factures et tableau admin peuvent fonctionner avec les données Supabase.
+Les variables pour le déploiement restent `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`; voir `VERCEL_DEPLOY.md` pour le déploiement Vercel sans GitHub.

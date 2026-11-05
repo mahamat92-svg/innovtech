@@ -70,4 +70,4 @@ Vercel construit l'application avec `npm run build`; aucun dossier de sortie per
 3. Ajoute ce domaine aux **Redirect URLs** autorisées.
 4. Teste l'inscription. Si la confirmation d'e-mail est activée, confirme l'adresse avant de te connecter.
 
-Les tables et fonctions SQL doivent déjà être installées dans Supabase : exécute `202611040002_live_saas.sql`, puis `202611040003_credit_repayments.sql`. Le fichier `202611040001_innovtech_core.sql` est une ancienne base de travail et n'est pas requis par cette version de l'application.
+Les tables et fonctions SQL doivent être installées dans Supabase. Pour la version multi-sectorielle, exécute `202611040004_multi_sector.sql` après les migrations commerce/crédits `0002` et `0003` (si elles ont déjà été exécutées, ne les relance pas). Le fichier `202611040001_innovtech_core.sql` est une ancienne base de travail et n'est pas requis par cette version de l'application.
